@@ -1,0 +1,7 @@
+NODE_NAME:
+  user: root
+  tty: True
+  port: 22
+  timeout: 300
+  priv: NODE_KEY
+

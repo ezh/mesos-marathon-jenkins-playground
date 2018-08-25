@@ -15,7 +15,3 @@ docker-compose:
   pip.installed:
     - name: docker-compose
 
-mesos-stack:
-  file.managed:
-    - name: /data/docker-compose.yml
-    - source: salt://resources/docker-compose.yaml
