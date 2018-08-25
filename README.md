@@ -8,6 +8,9 @@ Deploying environment as root with private key /path/to/private/ssh/key/id_rsa
 python deploy.py --priv=~/path/to/private/ssh/key/id_rsa --masters=1.1.1.1,1.1.1.2 --slaves=1.1.1.2,1.1.1.3 --jenkins=1.1.1.1 -l info
 ```
 
+Environment
+-----------
+
 * 1.1.1.1 - only master node + Jenkins
 * 1.1.1.2 - master + slave node
 * 1.1.1.3 - only slave node
@@ -22,5 +25,15 @@ After deployment there will be:
 * 1.1.1.2:8080 - Marathon
 ------
 * 1.1.1.3:8051 - Slave
+
+Jenkins
+-------
+
+Jenkin is connected to Mesos and Marathon by default.
+
+There are 2 example jobs:
+* hello-world-marathon - deploy Marathon application
+* hello-world-mesos - run Jenkins slave inside Mesos cloud
+
 
 Alexey Aksenov, 2018 MIT license
