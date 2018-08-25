@@ -105,7 +105,7 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
             for i in self.config['playground_slave_nodes']:
                 self.log.info("Add %s to slave nodes", i)
                 roster[i] = template['NODE_NAME']
-                roster[i]['minion_opts'] = {'grains': {'roles': ['slave']}}
+                roster[i]['minion_opts'] = {'grains': {'role': ['slave']}}
                 roster[i]['priv'] = self.config['ssh_priv']
             for i in self.config['playground_master_nodes']:
                 self.log.info("Add %s to master nodes", i)
@@ -113,14 +113,14 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
                     roster[i] = template['NODE_NAME']
                     roster[i]['minion_opts'] = {
                         'grains': {
-                            'roles': ['master']
+                            'role': ['master']
                         }
                     }
                     roster[i]['priv'] = self.config['ssh_priv']
                 else:
                     if roster[i].get('minion_opts', {}).get('grains', {}).get(
-                            'roles', []):
-                        roster[i]['minion_opts']['grains']['roles'].append(
+                            'role', []):
+                        roster[i]['minion_opts']['grains']['role'].append(
                             'master')
                     else:
                         roster[i]['minion_opts'] = {
