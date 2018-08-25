@@ -14,7 +14,9 @@ services:
     depends_on:
       - zookeeper
     environment:
+      - MESOS_IP=$NODE_IP
       - MESOS_HOSTNAME=$NODE_IP
+      - MESOS_ADVERTISE_IP=$NODE_IP
       - MESOS_CLUSTER=PLAYGROUND
       - MESOS_LOGGING_LEVEL=$LOG_LEVEL
       - MESOS_LOG_DIR=/var/log/mesos

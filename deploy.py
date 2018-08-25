@@ -9,7 +9,7 @@ try:
     imp.find_module('salt')
 except ImportError:
     subprocess.call([
-        sys.executable, "-m", "pip", "install",
+        sys.executable, "-m", "pip", "install", "--verbose",
         "git+https://github.com/saltstack/salt.git@v2018.3.2"
     ])
 

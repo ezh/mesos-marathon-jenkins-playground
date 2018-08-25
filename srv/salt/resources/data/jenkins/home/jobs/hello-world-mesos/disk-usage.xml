@@ -1,0 +1,30 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson.plugins.disk__usage.ProjectDiskUsage plugin="disk-usage@0.28">
+  <diskUsageWithoutBuilds>0</diskUsageWithoutBuilds>
+  <slaveWorkspacesUsage class="concurrent-hash-map">
+    <entry>
+      <string>mesos-jenkins-dff41f135c744fc2afa07375240021c8-mesos</string>
+      <concurrent-hash-map>
+        <entry>
+          <string>/var/tmp/mesos/slaves/685c353e-f89e-4a86-b83d-5a8aefdc2029-S0/frameworks/34282350-8ce2-4bf4-8597-55697817c8c3-0000/executors/mesos-jenkins-dff41f135c744fc2afa07375240021c8-mesos/runs/9d4b4be4-4ac1-46f2-a733-3ffc1af486a8/jenkins/workspace/hello-world-mesos</string>
+          <long>4096</long>
+        </entry>
+      </concurrent-hash-map>
+    </entry>
+  </slaveWorkspacesUsage>
+  <buildDiskUsage class="java.util.concurrent.CopyOnWriteArraySet">
+    <hudson.plugins.disk__usage.DiskUsageBuildInformation>
+      <id>1</id>
+      <timestamp>1535219579173</timestamp>
+      <number>1</number>
+      <size>7840</size>
+    </hudson.plugins.disk__usage.DiskUsageBuildInformation>
+    <hudson.plugins.disk__usage.DiskUsageBuildInformation>
+      <id>2</id>
+      <timestamp>1535221134330</timestamp>
+      <number>2</number>
+      <size>7800</size>
+    </hudson.plugins.disk__usage.DiskUsageBuildInformation>
+  </buildDiskUsage>
+  <allBuildsLoaded>false</allBuildsLoaded>
+</hudson.plugins.disk__usage.ProjectDiskUsage>
