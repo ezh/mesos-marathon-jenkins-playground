@@ -9,6 +9,12 @@ jenkins-config:
     - source: salt://resources/data/jenkins/home/config.xml.template
     - template: jinja
 
+jenkins-hello-world-config:
+  file.managed:
+    - name: /data/jenkins/home/jobs/hello-world-marathon/config.xml
+    - source: salt://resources/data/jenkins/home/jobs/hello-world-marathon/config.xml.template
+    - template: jinja
+
 jenkins-build:
   cmd.run:
     - name: docker-compose build

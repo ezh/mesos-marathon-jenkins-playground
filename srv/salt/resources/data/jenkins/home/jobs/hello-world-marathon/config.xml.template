@@ -1,0 +1,62 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.24">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.54">
+    <script>node {
+  stage(&quot;deploy marathon application&quot;) {
+    writeFile file: &apos;app.json&apos;, text: &apos;&apos;&apos;
+    {
+      &quot;id&quot;: &quot;/hello&quot;,
+      &quot;cmd&quot;: null,
+      &quot;cpus&quot;: 0.01,
+      &quot;mem&quot;: 128,
+      &quot;disk&quot;: 0,
+      &quot;instances&quot;: 3,
+      &quot;acceptedResourceRoles&quot;: [
+        &quot;*&quot;
+      ],
+      &quot;container&quot;: {
+        &quot;type&quot;: &quot;DOCKER&quot;,
+        &quot;docker&quot;: {
+          &quot;forcePullImage&quot;: false,
+          &quot;image&quot;: &quot;dockercloud/hello-world&quot;,
+          &quot;parameters&quot;: [],
+          &quot;privileged&quot;: false
+        },
+        &quot;volumes&quot;: [],
+        &quot;portMappings&quot;: [{
+          &quot;containerPort&quot;: 80,
+          &quot;hostPort&quot;: 0,
+          &quot;labels&quot;: {},
+          &quot;name&quot;: &quot;http&quot;,
+          &quot;protocol&quot;: &quot;tcp&quot;,
+          &quot;servicePort&quot;: 10000
+        }]
+      },
+      &quot;healthChecks&quot;: [{
+        &quot;gracePeriodSeconds&quot;: 300,
+        &quot;ignoreHttp1xx&quot;: false,
+        &quot;intervalSeconds&quot;: 60,
+        &quot;maxConsecutiveFailures&quot;: 3,
+        &quot;path&quot;: &quot;/&quot;,
+        &quot;portIndex&quot;: 0,
+        &quot;protocol&quot;: &quot;HTTP&quot;,
+        &quot;ipProtocol&quot;: &quot;IPv4&quot;,
+        &quot;timeoutSeconds&quot;: 20,
+        &quot;delaySeconds&quot;: 15
+      }],
+      &quot;networks&quot;: [{
+        &quot;mode&quot;: &quot;container/bridge&quot;
+      }]
+    }&apos;&apos;&apos;
+    marathon filename: &apos;app.json&apos;, id: &apos;hello-world&apos;, url: &apos;http://{{ grains['id'] }}:8080&apos;
+  }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
