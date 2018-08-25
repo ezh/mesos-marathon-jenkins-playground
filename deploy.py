@@ -1,28 +1,21 @@
+import copy
+import imp
+import logging
+import optparse
 import subprocess
 import sys
-import ptpdb
 
-
-def install():
-    subprocess.call(['ls'])
+try:
+    imp.find_module('salt')
+except ImportError:
     subprocess.call([
         sys.executable, "-m", "pip", "install",
         "git+https://github.com/saltstack/salt.git@v2018.3.2"
     ])
 
-
-#install()
-
-from salt.scripts import salt_ssh
 import salt.cli.ssh
-from unittest.mock import patch
-import logging
-import argparse
-import optparse
-import os
-import yaml
 import salt.returners.local_cache
-import copy
+import yaml
 
 
 class Playground(salt.utils.parsers.SaltSSHOptionParser):
@@ -34,21 +27,31 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
         playground_group.add_option(
             '--masters',
             dest='playground_master_nodes',
-            help='List of master nodes')
+            help='List of master nodes IPs')
         playground_group.add_option(
             '--slaves',
             dest='playground_slave_nodes',
-            help='List of slave nodes')
+            help='List of slave nodes IPs')
+        playground_group.add_option(
+            '--jenkins',
+            dest='playground_jenkins_node',
+            help='Jenkins node IP')
         self.add_option_group(playground_group)
         self.log = logging.getLogger(__name__)
 
     def _mixin_after_parsed(self):
         if not self.options.playground_master_nodes:
             self.error(
-                'Please provide playground master nodes with --masters option')
+                'Please provide playground master nodes IPs with --masters option'
+            )
         if not self.options.playground_slave_nodes:
             self.error(
-                'Please provide playground slave nodes with --slaves option')
+                'Please provide playground slave nodes IPs with --slaves option'
+            )
+        if not self.options.playground_jenkins_node:
+            self.error(
+                'Please provide playground Jenkins node IP with --jenkins option'
+            )
         if not self.options.ssh_priv:
             self.error(
                 'Please provide path to SSH private key with --priv option')
@@ -97,15 +100,24 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
         self.config[
             'playground_slave_nodes'] = self.options.playground_slave_nodes.split(
                 ',')
+        self.config[
+            'playground_jenkins_node'] = self.options.playground_jenkins_node
 
     def prepare_roster(self):
         roster = {}
         with open("etc/salt/roster.template", 'r') as stream:
             template = yaml.load(stream)
+            zk_grains = ','.join(
+                i + ':2181' for i in self.config['playground_master_nodes'])
             for i in self.config['playground_slave_nodes']:
                 self.log.info("Add %s to slave nodes", i)
                 roster[i] = template['NODE_NAME']
-                roster[i]['minion_opts'] = {'grains': {'role': ['slave']}}
+                roster[i]['minion_opts'] = {
+                    'grains': {
+                        'role': ['slave'],
+                        'zk': zk_grains
+                    }
+                }
                 roster[i]['priv'] = self.config['ssh_priv']
             for i in self.config['playground_master_nodes']:
                 self.log.info("Add %s to master nodes", i)
@@ -113,21 +125,18 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
                     roster[i] = template['NODE_NAME']
                     roster[i]['minion_opts'] = {
                         'grains': {
-                            'role': ['master']
+                            'role': ['master'],
+                            'zk': zk_grains
                         }
                     }
                     roster[i]['priv'] = self.config['ssh_priv']
                 else:
-                    if roster[i].get('minion_opts', {}).get('grains', {}).get(
-                            'role', []):
-                        roster[i]['minion_opts']['grains']['role'].append(
-                            'master')
-                    else:
-                        roster[i]['minion_opts'] = {
-                            'grains': {
-                                'roles': ['master']
-                            }
-                        }
+                    roster[i].setdefault('minion_opts', {}).setdefault(
+                        'grains', {}).setdefault('role', []).append('master')
+            roster.setdefault(self.config['playground_jenkins_node'],
+                              {}).setdefault('minion_opts', {}).setdefault(
+                                  'grains',
+                                  {}).setdefault('role', []).append('jenkins')
         with open("etc/salt/roster", 'w') as stream:
             yaml.dump(roster, stream, allow_unicode=True)
         # remove SSH private key to aviod key deployment invocation
@@ -159,24 +168,33 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
         self.parse_args()
         self.prepare_config()
         masters, slaves = self.prepare_roster()
-        self.step_raw(
-            "Install python 3 for Debian based environment",  True, "*",
-            "which python3 || apt-get -y install python36 || apt-get -y install python35"
-        )
-        self.step_raw(
-            "Install python 3 for RH based environment", True, "*",
-            "which python3 || " +
-            "(yum -y install python36; ln -s /usr/bin/python36 /usr/bin/python3) ||" +
-            "(yum -y install python35; ln -s /usr/bin/python35 /usr/bin/python3)"
-        )
-        self.step_raw(
-            "Install PIP for python 3", True, "*",
-            "curl https://bootstrap.pypa.io/get-pip.py | python3")
+        # self.step_raw(
+        #     "Install python 3 for Debian based environment", True, "*",
+        #     "which python3 || apt-get -y install python36 || apt-get -y install python35"
+        # )
+        # self.step_raw(
+        #     "Install python 3 for RH based environment", True, "*",
+        #     "which python3 || " +
+        #     "(yum -y install python36; ln -s /usr/bin/python36 /usr/bin/python3) ||"
+        #     +
+        #     "(yum -y install python35; ln -s /usr/bin/python35 /usr/bin/python3)"
+        # )
+        # self.step_raw("Install PIP for python 3", True, "*",
+        #               "curl https://bootstrap.pypa.io/get-pip.py | python3")
         result = self.step("Test connection", "*", "test.ping")
         if not self.check(result, masters, 'return', 'return', 'True'):
             sys.exit("Unable to validate connection")
-        result = self.step("Setup environment", "*", "state.highstate")
-        print(result)
+        result = self.step("Setup environment", "*", "state.highstate", "pillar={start: true}")
+        if not self.check(result, masters, 'return', 'retcode', 0):
+            sys.exit("Unable to setup masters environment")
+        self.summary()
+
+    def summary(self):
+        print("\n\n" + "#" * 10 + " Summary\n\n")
+        print("Mesos: {}".format(" ".join("http://{}:5050/".format(i) for i in self.config['playground_master_nodes'])))
+        print("Marathon: {}".format(" ".join("http://{}:8080/".format(i) for i in self.config['playground_master_nodes'])))
+        print("Jenkins: {}".format("http://{}:8081/".format(self.config['playground_jenkins_node'])))
+        print("\n\nRun tests to validate config\n\n")
 
 
 if __name__ == "__main__":

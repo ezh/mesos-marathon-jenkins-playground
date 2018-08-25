@@ -1,0 +1,24 @@
+version: "3"
+services:
+  mesosslave:
+    image: mesosphere/mesos-slave:1.5.0
+    environment:
+      - MESOS_MASTER=zk://$ZK_NODES/mesos
+      - MESOS_IP=$NODE_IP
+      - MESOS_HOSTNAME=$NODE_IP
+      - MESOS_LOGGING_LEVEL=$LOG_LEVEL
+      - MESOS_PORT=5051
+      - MESOS_RESOURCES=ports(*):[10000-11999]
+      - MESOS_SYSTEMD_ENABLE_SUPPORT=false
+      - MESOS_CONTAINERIZERS=mesos,docker
+      - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=1mins
+      - MESOS_ISOLATOR=cgroups/cpu,cgroups/mem
+      - MESOS_WORK_DIR=/var/tmp/mesos
+      - MESOS_LOG_DIR=/var/log/mesos
+    network_mode: host
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/slave/mesosslave/logs:/var/log/mesos
+      - /data/slave/mesosslave/data:/var/tmp/mesos

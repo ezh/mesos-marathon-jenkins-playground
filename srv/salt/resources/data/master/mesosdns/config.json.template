@@ -1,5 +1,5 @@
 {
-  "zk": "zk://zookeeper:2181/mesos",
+  "zk": "zk://{{ grains['zk'] }}/mesos",
   "masters": [],
   "stateTimeoutSeconds": 60,
   "refreshSeconds": 15,

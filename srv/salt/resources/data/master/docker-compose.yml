@@ -14,15 +14,15 @@ services:
     depends_on:
       - zookeeper
     environment:
-      - MESOS_ADVERTISE_IP=$NODE_IP
-      - MESOS_PORT=5050
-      - MESOS_ZK=$MESOS_ZK
-      - MESOS_LOG_DIR=/var/log/mesos
-      - MESOS_LOGGING_LEVEL=$LOG_LEVEL
+      - MESOS_HOSTNAME=$NODE_IP
       - MESOS_CLUSTER=PLAYGROUND
+      - MESOS_LOGGING_LEVEL=$LOG_LEVEL
+      - MESOS_LOG_DIR=/var/log/mesos
+      - MESOS_PORT=5050
       - MESOS_QUORUM=1
       - MESOS_REGISTRY=in_memory
       - MESOS_WORK_DIR=/var/lib/mesos
+      - MESOS_ZK=zk://$ZK_NODES/mesos
     network_mode: host
     restart: "unless-stopped"
     volumes:
@@ -32,9 +32,6 @@ services:
     hostname: mesosdns
     image: mesosphere/mesos-dns:v0.6.0
     command: [ "/usr/bin/mesos-dns", "-v=2", "-config=/config.json" ]
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
     links:
       - zookeeper
     ports:
@@ -50,9 +47,6 @@ services:
     image: marathon
     depends_on:
       - mesosdns
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
     entrypoint:
       - bash
       - -cexu
@@ -61,9 +55,10 @@ services:
         cp /etc/resolv.conf /etc/resolv.conf.bak &&
         sed "s/127.0.0.11/$NODE_IP/" /etc/resolv.conf.bak > /etc/resolv.conf &&
         exec bin/start
-        --hostname $NODE_IP
-        --master zk://$NODE_IP:2181/mesos
-        --zk zk://$NODE_IP:2181/marathon
+    environment:
+      - MARATHON_HOSTNAME=$NODE_IP
+      - MARATHON_MASTER=zk://$ZK_NODES/mesos
+      - MARATHON_ZK=zk://$ZK_NODES/marathon
     command: []
     network_mode: host
     restart: "unless-stopped"
