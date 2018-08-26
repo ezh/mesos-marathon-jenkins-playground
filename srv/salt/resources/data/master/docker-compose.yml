@@ -58,6 +58,7 @@ services:
         sed "s/127.0.0.11/$NODE_IP/" /etc/resolv.conf.bak > /etc/resolv.conf &&
         exec bin/start
     environment:
+      - LIBPROCESS_IP=$NODE_IP
       - MARATHON_HOSTNAME=$NODE_IP
       - MARATHON_MASTER=zk://$ZK_NODES/mesos
       - MARATHON_ZK=zk://$ZK_NODES/marathon

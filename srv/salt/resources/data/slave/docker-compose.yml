@@ -3,6 +3,7 @@ services:
   mesosslave:
     image: mesosphere/mesos-slave:1.5.0
     environment:
+      - LIBPROCESS_IP=$NODE_IP
       - MESOS_MASTER=zk://$ZK_NODES/mesos
       - MESOS_IP=$NODE_IP
       - MESOS_HOSTNAME=$NODE_IP
@@ -17,6 +18,7 @@ services:
       - MESOS_LOG_DIR=/var/log/mesos
     network_mode: host
     privileged: true
+    restart: "unless-stopped"
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
       - /var/run/docker.sock:/var/run/docker.sock

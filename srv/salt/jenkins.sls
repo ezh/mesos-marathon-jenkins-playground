@@ -3,6 +3,12 @@ jenkins-resources:
     - name: /data/jenkins
     - source: salt://resources/data/jenkins
 
+jenkins-env:
+  file.managed:
+    - name: /data/jenkins/.env
+    - source: salt://resources/data/jenkins/.env.template
+    - template: jinja
+
 jenkins-config:
   file.managed:
     - name: /data/jenkins/home/config.xml

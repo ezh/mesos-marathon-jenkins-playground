@@ -10,6 +10,9 @@ services:
       -Dpermissive-script-security.enabled=no_security
       -jar /usr/share/jenkins/jenkins.war
       --prefix=/ --argumentsRealm.passwd.playground=playground --argumentsRealm.roles.playground=admin --httpPort=8081
+    environment:
+      - LIBPROCESS_IP=$NODE_IP
     network_mode: host
+    restart: "unless-stopped"
     volumes:
       - /data/jenkins/home:/var/jenkins_home

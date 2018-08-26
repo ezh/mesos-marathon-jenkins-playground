@@ -111,7 +111,7 @@ class Playground(salt.utils.parsers.SaltSSHOptionParser):
                 i + ':2181' for i in self.config['playground_master_nodes'])
             for i in self.config['playground_slave_nodes']:
                 self.log.info("Add %s to slave nodes", i)
-                roster[i] = template['NODE_NAME']
+                roster[i] = copy.deepcopy(template['NODE_NAME'])
                 roster[i]['minion_opts'] = {
                     'grains': {
                         'role': ['slave'],
