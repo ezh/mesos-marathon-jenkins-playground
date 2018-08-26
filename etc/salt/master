@@ -1,6 +1,9 @@
-sock_dir: //tmp/ezh-salt-minion/
 root_dir: ./
 file_roots:
   base:
     - "./srv/salt"
     - "../../srv/salt"
+pillar_roots:
+  base:
+    - "./srv/pillar"
+    - "../../srv/pillar"

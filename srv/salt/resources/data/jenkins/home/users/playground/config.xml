@@ -1,19 +1,40 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <user>
   <fullName>Playground user</fullName>
+  <description></description>
   <properties>
     <jenkins.security.ApiTokenProperty>
       <tokenStore>
-        <tokenList/>
+        <tokenList>
+          <jenkins.security.apitoken.ApiTokenStore_-HashedToken>
+            <uuid>b446c0b2-40bf-4cc2-aa62-f3c9f76b0665</uuid>
+            <name>Token created on 2018-08-26T06:01:01.264Z</name>
+            <creationDate>2018-08-26 06:01:01.273 UTC</creationDate>
+            <value>
+              <version>11</version>
+              <hash>e3741ab39f0cd6b8ccdcd0cb4cd1bde15324e75c86cf0715569f63f5d5fcb4b3</hash>
+            </value>
+          </jenkins.security.apitoken.ApiTokenStore_-HashedToken>
+        </tokenList>
       </tokenStore>
     </jenkins.security.ApiTokenProperty>
     <com.cloudbees.plugins.credentials.UserCredentialsProvider_-UserCredentialsProperty plugin="credentials@2.1.18">
       <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash"/>
     </com.cloudbees.plugins.credentials.UserCredentialsProvider_-UserCredentialsProperty>
+    <hudson.tasks.Mailer_-UserProperty plugin="mailer@1.21">
+      <emailAddress>playground@nowhere</emailAddress>
+    </hudson.tasks.Mailer_-UserProperty>
     <hudson.plugins.emailext.watching.EmailExtWatchAction_-UserProperty plugin="email-ext@2.63">
       <triggers/>
     </hudson.plugins.emailext.watching.EmailExtWatchAction_-UserProperty>
+    <jenkins.security.LastGrantedAuthoritiesProperty>
+      <roles>
+        <string>authenticated</string>
+      </roles>
+      <timestamp>1535213863234</timestamp>
+    </jenkins.security.LastGrantedAuthoritiesProperty>
     <hudson.model.MyViewsProperty>
+      <primaryViewName></primaryViewName>
       <views>
         <hudson.model.AllView>
           <owner class="hudson.model.MyViewsProperty" reference="../../.."/>
@@ -30,20 +51,14 @@
     <hudson.model.PaneStatusProperties>
       <collapsed/>
     </hudson.model.PaneStatusProperties>
-    <hudson.search.UserSearchProperty>
-      <insensitiveSearch>true</insensitiveSearch>
-    </hudson.search.UserSearchProperty>
     <hudson.security.HudsonPrivateSecurityRealm_-Details>
       <passwordHash>#jbcrypt:$2a$10$hKU8zb2snYV5VO50vFqkMe2hu6C5mP8WrfUGv7VU/n8IJRMSXm.62</passwordHash>
     </hudson.security.HudsonPrivateSecurityRealm_-Details>
-    <hudson.tasks.Mailer_-UserProperty plugin="mailer@1.21">
-      <emailAddress>playground@nowhere</emailAddress>
-    </hudson.tasks.Mailer_-UserProperty>
-    <jenkins.security.LastGrantedAuthoritiesProperty>
-      <roles>
-        <string>authenticated</string>
-      </roles>
-      <timestamp>1535213863234</timestamp>
-    </jenkins.security.LastGrantedAuthoritiesProperty>
+    <org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl>
+      <authorizedKeys></authorizedKeys>
+    </org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl>
+    <hudson.search.UserSearchProperty>
+      <insensitiveSearch>true</insensitiveSearch>
+    </hudson.search.UserSearchProperty>
   </properties>
 </user>
